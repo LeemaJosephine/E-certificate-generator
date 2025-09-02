@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Certificate Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .form-section {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .certificate-preview {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .certificate {
+            width: 800px;
+            height: 600px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border: 8px solid #2c3e50;
+            border-radius: 15px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .certificate::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 3px solid #gold;
+            border-color: #ffd700;
+            border-radius: 10px;
+        }
+
+        .certificate-title {
+            font-size: 3rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .certificate-subtitle {
+            font-size: 1.3rem;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+        }
+
+        .certificate-recipient {
+            font-size: 2.2rem;
+            color: #e74c3c;
+            margin: 30px 0;
+            font-weight: bold;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 10px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .certificate-text {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .certificate-club {
+            font-size: 1.4rem;
+            color: #3498db;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .certificate-date {
+            position: absolute;
+            bottom: 60px;
+            right: 80px;
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+
+        .certificate-signature {
+            position: absolute;
+            bottom: 60px;
+            left: 80px;
+            text-align: center;
+        }
+
+        .signature-line {
+            width: 200px;
+            height: 2px;
+            background: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .signature-text {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .download-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e8f4fd;
+            border-radius: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .certificate {
+                width: 100%;
+                max-width: 600px;
+                height: 450px;
+            }
+            
+            .certificate-title {
+                font-size: 2rem;
+            }
+            
+            .certificate-recipient {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 E-Certificate Generator</h1>
+            <p>Create beautiful certificates instantly</p>
+        </div>
+
+        <div class="form-section">
+            <form id="certificateForm">
+                <div class="form-group">
+                    <label for="participantName">Participant Name:</label>
+                    <input type="text" id="participantName" name="participantName" placeholder="Enter participant's full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="clubName">Club/Organization Name:</label>
+                    <input type="text" id="clubName" name="clubName" placeholder="Enter club or organization name" required>
+                </div>
+
+
+
+                <button type="submit" class="btn">Generate Certificate</button>
+            </form>
+
+            <div id="certificatePreview" class="certificate-preview hidden">
+                <h3 style="margin-bottom: 20px; color: #2c3e50;">Certificate Preview</h3>
+                
+                <canvas id="certificateCanvas" class="certificate"></canvas>
+
+                <div class="download-section">
+                    <p style="margin-bottom: 15px; color: #2c3e50;">Your certificate is ready!</p>
+                    <button id="downloadBtn" class="btn">📥 Download Certificate</button>
+                    <button id="generateNew" class="btn" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">🔄 Generate New Certificate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('certificateForm');
+        const preview = document.getElementById('certificatePreview');
+        const canvas = document.getElementById('certificateCanvas');
+        const ctx = canvas.getContext('2d');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const generateNewBtn = document.getElementById('generateNew');
+
+        // Set canvas size
+        canvas.width = 800;
+        canvas.height = 600;
+
+        const certificateTitle = 'Certificate of Participation';
+        const certificateText = 'has participated in our program and activities.';
+
+        function drawCertificate(name, club) {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#ffffff');
+            gradient.addColorStop(1, '#f8f9fa');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Main border
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 8;
+            ctx.strokeRect(4, 4, canvas.width - 8, canvas.height - 8);
+
+            // Inner decorative border
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+            // Title
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 48px Georgia';
+            ctx.textAlign = 'center';
+            ctx.fillText(certificateTitle, canvas.width / 2, 100);
+
+            // Main certificate text with participant name and club
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = '24px Georgia';
+            ctx.textAlign = 'center';
+            
+            const mainText = `${name} from ${club}`;
+            ctx.fillText(mainText, canvas.width / 2, 220);
+
+            // Underline for the main text
+            const textWidth = ctx.measureText(mainText).width;
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo((canvas.width - textWidth) / 2, 235);
+            ctx.lineTo((canvas.width + textWidth) / 2, 235);
+            ctx.stroke();
+
+            // Certificate text
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = '20px Georgia';
+            ctx.fillText(certificateText, canvas.width / 2, 300);
+
+            // Date
+            ctx.fillStyle = '#7f8c8d';
+            ctx.font = '16px Georgia';
+            ctx.textAlign = 'right';
+            const today = new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            ctx.fillText(`Date: ${today}`, canvas.width - 80, canvas.height - 80);
+
+            // Signature line
+            ctx.textAlign = 'center';
+            ctx.fillText('Authorized Signature', 150, canvas.height - 80);
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, canvas.height - 100);
+            ctx.lineTo(250, canvas.height - 100);
+            ctx.stroke();
+
+            // Decorative elements
+            drawDecorativeElements();
+        }
+
+        function drawDecorativeElements() {
+            // Corner decorations
+            ctx.fillStyle = '#ffd700';
+            
+            // Top left corner
+            ctx.beginPath();
+            ctx.arc(60, 60, 15, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Top right corner
+            ctx.beginPath();
+            ctx.arc(canvas.width - 60, 60, 15, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Bottom left corner
+            ctx.beginPath();
+            ctx.arc(60, canvas.height - 60, 15, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Bottom right corner
+            ctx.beginPath();
+            ctx.arc(canvas.width - 60, canvas.height - 60, 15, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Award ribbon/seal
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.arc(canvas.width - 120, 150, 30, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('★', canvas.width - 120, 158);
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('participantName').value.trim();
+            const club = document.getElementById('clubName').value.trim();
+
+            if (!name || !club) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            drawCertificate(name, club);
+            preview.classList.remove('hidden');
+            preview.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        downloadBtn.addEventListener('click', function() {
+            const name = document.getElementById('participantName').value.trim();
+            const link = document.createElement('a');
+            link.download = `certificate_${name.replace(/\s+/g, '_')}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+
+        generateNewBtn.addEventListener('click', function() {
+            form.reset();
+            preview.classList.add('hidden');
+            document.getElementById('participantName').focus();
+        });
+
+        // Focus on first input when page loads
+        document.getElementById('participantName').focus();
+    </script>
+</body>
+</html>
